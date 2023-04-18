@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>
+
+        class Lancamento {
+            constructor(categoria, tipo, valor) {
+                if (tipo !== "receita" && tipo !== "despesa") {
+                    throw new Error("Lançamento Inválido: Tipo deve ser receita ou despesa");
+                }
+                if (valor <= 0) {
+                    throw new Error("Lançamento Inválido: Valor deve ser maior que 0");
+                }
+                if (categoria === "") {
+                    throw new Error("Lançamento Inválido: A categoria é obrigatoria");
+                }
+                this.categoria = categoria
+                this.tipo = tipo
+                this.valor = valor
+            }
+        }
+
+        class Mes {
+            constructor(nome, saldoInicial) {
+                if (nome === "") throw new Error("Mês invalido: Nome é Obrigatorio seu otário");
+                this.nome = nome
+                this.saldoInicial = saldoInicial
+                this.totalizadorDoMes = { saldo: 0, saldoInicial, juros: 0, rendimentos: 0, receitas: 0, despesas: 0, distribuicaoDeDespesas: [] };
+                this.lancamentos = [];
+            }
+
+            adicionarLancamento(lancamento) {
+                this.lancamentos.push(lancamento);
+            }
+
+            calcularSaldo () {
+                for (const lancamento of this.lancamentos){
+                    if (lancamento.tipo === "receita") {
+                        this.totalizadorDoMes.saldo += lancamento.valor;
+                    }
+                    if (lancamento.tipo === "despesa") {
+                        this.totalizadorDoMes.saldo -= lancamento.valor;
+                    }
+                }
+            }
+
+        }
+
+        const janeiro = new Mes("janeiro", 0)
+        janeiro.adicionarLancamento(new Lancamento("Salario", "receita", 3000));
+        janeiro.adicionarLancamento(new Lancamento("Aluguel", "despesa", 1000));
+        janeiro.calcularSaldo();
+        console.log(janeiro)
+
+
+
+        function arrendondar(valor) {
+            return Math.round(valor * 100) / 100;
+        }
+
+        function calcularJuros(valor) {
+            return arrendondar(valor * 0.1);
+        }
+
+        function calcularRendimentos(valor) {
+            const rendimentos = arrendondar(valor * 0.25)
+            console.log(rendimentos)
+            return rendimentos;
+        }
+        function distribuirDespesas(lancamentos, total) {
+            const distribuicaoDeDespesas = [];
+            for (lancamento of lancamentos) {
+                if (lancamento.tipo === "despesa") {
+                    percentual = arrendondar((lancamento.valor / total) * 100);
+                    console.log(lancamento.categoria, percentual)
+                    distribuicaoDeDespesas.push({ categoria: lancamento.categoria, percentual });
+                }
+            }
+            return distribuicaoDeDespesas;
+        }
+
+        function calcularSaldo(mes, saldoInicial, lancamentos) {
+            console.log(mes)
+            const totalizadorDoMes = { saldo: 0, saldoInicial, juros: 0, rendimentos: 0, receitas: 0, despesas: 0, distribuicaoDeDespesas: [] };
+            totalizadorDoMes.saldo = saldoInicial;
+            for (const lancamento of lancamentos) {
+                if (lancamento.tipo === "receita") {
+                    totalizadorDoMes.saldo += lancamento.valor;
+                    totalizadorDoMes.receitas += lancamento.valor;
+                }
+                if (lancamento.tipo === "despesa") {
+                    totalizadorDoMes.saldo -= lancamento.valor;
+                    totalizadorDoMes.despesas += lancamento.valor;
+                }
+            }
+            totalizadorDoMes.distribuicaoDeDespesas = distribuirDespesas(lancamentos, totalizadorDoMes.despesas);
+            const estaNegativo = totalizadorDoMes.saldo < 0;
+            if (estaNegativo) {
+                totalizadorDoMes.juros = calcularJuros(totalizadorDoMes.saldo);
+                totalizadorDoMes.saldo = arrendondar(totalizadorDoMes.saldo + juros);
+            } else {
+                totalizadorDoMes.rendimentos = calcularRendimentos(totalizadorDoMes.saldo);
+                totalizadorDoMes.saldo = arrendondar(totalizadorDoMes.saldo + totalizadorDoMes.rendimentos);
+            }
+            return totalizadorDoMes;
+        }
+        const saldoInicial = 0
+        const lancamentosJaneiro = [
+            new Lancamento("Salário", "receita", 5000),
+            new Lancamento("Alguel", "despesa", 200),
+            new Lancamento("Conta de Luz", "despesa", 400),
+            new Lancamento("Conta de Água", "despesa", 500),
+            new Lancamento("Lazer", "despesa", 3000),
+            new Lancamento("Transporte", "despesa", 300)
+        ]
+        const totalizadorDoMes1 = calcularSaldo("janeiro", saldoInicial, lancamentosJaneiro)
+        console.log(totalizadorDoMes1)
+        const lancamentosFevereiro = [
+            new Lancamento("Salário", "receita", 5800),
+            new Lancamento("Alguel", "despesa", 400),
+            new Lancamento("Conta de Luz", "despesa", 500),
+            new Lancamento("Conta de Água", "despesa", 600),
+            new Lancamento("Lazer", "despesa", 4000),
+            new Lancamento("Transporte", "despesa", 500)
+        ]
+        const totalizadorDoMes2 = calcularSaldo("fevereiro", totalizadorDoMes1.saldo, lancamentosFevereiro)
+        console.log(totalizadorDoMes2)
+        const lancamentosMarco = [
+            new Lancamento("Salário", "receita", 6200),
+            new Lancamento("Alguel", "despesa", 200),
+            new Lancamento("Conta de Luz", "despesa", 200),
+            new Lancamento("Conta de Água", "despesa", 200),
+            new Lancamento("Lazer", "despesa", 1000),
+            new Lancamento("Transporte", "despesa", 300)
+        ]
+        const totalizadorDoMes3 = calcularSaldo("março", totalizadorDoMes2.saldo, lancamentosMarco)
+        console.log(totalizadorDoMes3)
+        const acumuladoAno = totalizadorDoMes3.saldo
+        console.log("ano")
+        console.log(acumuladoAno)
+
+        console.log(totalizadorDoMes1.saldo === 750)
+        console.log(totalizadorDoMes2.saldo === 687.5)
+        console.log(totalizadorDoMes3.saldo === 6234.38)
+
+
+    </script>
+</head>
+
+<body>
