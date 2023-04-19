@@ -8,7 +8,7 @@ const saldoInicial = 0
     janeiro.adicionarLancamento(new Lancamento("Transporte", "despesa", 300));
     janeiro.calcularSaldo();
     console.log(janeiro);
-    const fevereiro = new Mes("feveireiro", janeiro.totalizadorDoMes.saldo)
+    const fevereiro = new Mes("feveireiro", janeiro.totalizador.saldo)
     fevereiro.adicionarLancamento(new Lancamento("Salário", "receita", 5800));
     fevereiro.adicionarLancamento(new Lancamento("Alguel", "despesa", 400));
     fevereiro.adicionarLancamento(new Lancamento("Conta de Luz", "despesa", 500));
@@ -17,7 +17,7 @@ const saldoInicial = 0
     fevereiro.adicionarLancamento(new Lancamento("Transporte", "despesa", 500));
     fevereiro.calcularSaldo();
     console.log(fevereiro);
-    const marco = new Mes("marco", fevereiro.totalizadorDoMes.saldo)
+    const marco = new Mes("marco", fevereiro.totalizador.saldo)
     marco.adicionarLancamento(new Lancamento("Salário", "receita", 6200));
     marco.adicionarLancamento(new Lancamento("Alguel", "despesa", 200));
     marco.adicionarLancamento(new Lancamento("Conta de Luz", "despesa", 200));
@@ -26,5 +26,5 @@ const saldoInicial = 0
     marco.adicionarLancamento(new Lancamento("Transporte", "despesa", 300));
     marco.calcularSaldo();
     console.log(marco)
-    const acumuladoAno = marco.totalizadorDoMes.saldo
+    const acumuladoAno = marco.totalizador.saldo
  
