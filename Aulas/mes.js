@@ -1,9 +1,10 @@
 class Mes {
-  constructor(nome, saldoInicial) {
+
+  constructor(nome) {
     if (nome === "") throw new Error("Mês invalido: Nome é Obrigatorio seu otário");
     this.nome = nome
-    this.saldoInicial = saldoInicial
-    this.totalizador = { saldo: 0, saldoInicial, juros: 0, rendimentos: 0, receitas: 0, despesas: 0, distribuicaoDeDespesas: [] };
+    this.saldoInicial = 0;
+    this.totalizador = { saldo: 0, juros: 0, rendimentos: 0, receitas: 0, despesas: 0, distribuicaoDeDespesas: [] };
     this.lancamentos = [];
   }
 
@@ -13,6 +14,7 @@ class Mes {
 
   
   calcularSaldo() {
+    this.totalizador = { saldo: 0, juros: 0, rendimentos: 0, receitas: 0, despesas: 0, distribuicaoDeDespesas: [] };
     this.totalizador.saldo = this.saldoInicial;
     this.apurarReceitas();
     this.apurarDespesas();
@@ -43,8 +45,8 @@ class Mes {
     for (const lancamento of this.lancamentos) {
       if (lancamento.tipo === "despesa") {
         const percentual = arrendondar((lancamento.valor / this.totalizador.despesas) * 100);
-        console.log(lancamento.categoria, percentual)
-        distribuicaoDeDespesas.push({ categoria: lancamento.categoria, percentual });
+        //console.log(lancamento.categoria, percentual)
+        //distribuicaoDeDespesas.push({ categoria: lancamento.categoria, percentual });
       }
     }
     this.totalizador.distribuicaoDeDespesas = distribuicaoDeDespesas
