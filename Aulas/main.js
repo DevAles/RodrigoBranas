@@ -41,47 +41,89 @@ console.log(ano.meses);
 function addElement(parent, elementType, text) {
     const element = document.createElement(elementType);
     if (text !== "" && text !== undefined && text !== null)
-    element.innerText = text;
+        element.innerText = text;
     parent.appendChild(element);
 
 }
 
 function rendezirar() {
     const app = document.getElementById("app");
-    if (app.firstChild){
+    if (app.firstChild) {
         app.firstChild.remove();
     }
-    const painel = document.createElement("div");
-    for (const mes of ano.meses) {
-        addElement(painel, "h3", mes.nome);
-        for (const lancamento of mes.lancamentos) {
 
-            const detalhesLancamento = lancamento.tipo + " " + lancamento.categoria + " " + lancamento.valor;
-            addElement(painel, "p", detalhesLancamento);
+    const painel = document.createElement("div");
+    const cores = ["red", "yellow", "green", "blue"]
+    const grafico = document.createElement("div")
+    grafico.className = "grafico";
+    for (const mes of ano.meses) {
+        const coluna = document.createElement("div");
+        coluna.className = "grafico-coluna";
+        const cor = document.createElement("div");
+        cor.style.height = 120;
+        cor.style.background = cores.pop();
+        coluna.appendChild(cor)
+        const nomeDoMes = document.createElement("div");
+        nomeDoMes.innerText = mes.nome;
+        coluna.appendChild(cor);
+        coluna.appendChild(nomeDoMes)
+        grafico.appendChild(coluna)
+    }
+    painel.appendChild(grafico);
+
+    for (const mes of ano.meses) {
+        addElement(painel, "h4", mes.nome);
+        const tableLancamentos = document.createElement("table");
+        tableLancamentos.className = "tabela-lancamentos"
+        const linhaTitulo = document.createElement("tr");
+        addElement(linhaTitulo, "th", "Categoria");
+        addElement(linhaTitulo, "th", "Valor");
+        tableLancamentos.appendChild(linhaTitulo);
+        for (const lancamento of mes.lancamentos) {
+            const linhaLancamento = document.createElement("tr");
+            addElement(linhaLancamento, "td", lancamento.categoria);
+            addElement(linhaLancamento, "td", formatarDinheiro(lancamento.valor));
+            tableLancamentos.appendChild(linhaLancamento);
 
         }
-        addElement (painel, "h4", mes.totalizador.saldo);
-        addElement (painel, "hr")
+        const linhaJuros = document.createElement("tr");
+        addElement(linhaJuros, "th", "juros");
+        addElement(linhaJuros, "th", formatarDinheiro(mes.totalizador.juros));
+        tableLancamentos.appendChild(linhaJuros);
+        const linhaRendimentos = document.createElement("tr");
+        addElement(linhaRendimentos, "th", "rendimentos");
+        addElement(linhaRendimentos, "th", formatarDinheiro(mes.totalizador.rendimentos));
+        tableLancamentos.appendChild(linhaRendimentos);
+        const linhaSaldo = document.createElement("tr");
+        addElement(linhaSaldo, "th", "Total");
+        addElement(linhaSaldo, "th", formatarDinheiro(mes.totalizador.saldo));
+        tableLancamentos.appendChild(linhaSaldo);
+        painel.appendChild(tableLancamentos);
     }
-app.appendChild(painel);
+    app.appendChild(painel);
 }
-
 rendezirar();
 
-
-function adicionarLancamento () {
+function adicionarLancamento() {
     const mes = document.getElementById("mes");
     const categoria = document.getElementById("categoria");
     const tipo = document.getElementById("tipo");
-    const valor = document.getElementById("valor");  
+    const valor = document.getElementById("valor");
     ano.adicionarLancamento(mes.value, new Lancamento(categoria.value, tipo.value, parseFloat(valor.value)));
     ano.calcularSaldo();
     rendezirar()
-    document.getElementById("mes").value ="";
-    document.getElementById("categoria").value ="";
-    document.getElementById("tipo").value ="";
-    document.getElementById("valor").value ="";
+    document.getElementById("mes").value = ano.meses[0].nome;
+    document.getElementById("categoria").value = "receita";
+    document.getElementById("tipo").value = "";
+    document.getElementById("valor").value = "";
 }
 
 const botao = document.getElementById("botao");
-botao.addEventListener("click", adicionarLancamento);  
+botao.addEventListener("click", adicionarLancamento);
+
+const mesSelect = document.getElementById("mes");
+for (const mes of ano.meses) {
+    const option = document.createElement("option");
+    option.text = mes.nome
+    mesSelect.add(option);
+}
